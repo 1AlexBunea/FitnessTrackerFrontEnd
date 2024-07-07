@@ -7,10 +7,9 @@ import './App.css'
 import ScrollToTopButton from './ScrollToTopButton';
 
 interface Item {
-  id: number; // Assuming id is a number
-  day: number; // Assuming day is a number
-  month: number; // Assuming month is a number
-  year: number; // Assuming year is a number
+  day: number | null; // Assuming day is a number
+  month: number | null; // Assuming month is a number
+  year: number | null; // Assuming year is a number
   description: string; // Assuming description is a string
 }
 
@@ -59,21 +58,6 @@ function App() {
       ));
   };
 
-  // const addItem = () => {
-  //   const newItem = {
-  //     day: ,
-  //     month: ,
-  //     year: ,
-  //     description: 
-  //   };
-  //   setItems([...items, newItem]);
-  // };
-
-  // const removeItem = index => {
-  //   const updatedItems = [...items];
-  //   updatedItems.splice(index, 1);
-  //   setItems(updatedItems);
-  // };
 
   function handleLogOut() {
     setUsername('');
@@ -94,70 +78,42 @@ function App() {
   }
 
   const handleAddRequest = async () => {
-    const url = {BASE_URL} + '/add';
-    const data = {
-      "email": username,
-      "password": password,
-      "items": items,
-    }
-
     try {
-      const response = await fetch(url, {
+      const apiUrl = BASE_URL + '/add'; 
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          email: username,
+          password: password,
+          items: items,
+        }),
       });
-      console.log('hi')
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const responseData = await response.json();
-      setResponse(JSON.stringify(responseData, null, 2));
+      // const responseData = await response.json();
+      // console.log('Response from server:', responseData);
+      // Handle successful response here
     } catch (error) {
-      if (error instanceof Error) {
-        console.error('There was a problem with the fetch operation:', error);
-        setResponse(`Error: ${error.message}`);
-      } else {
-        console.error('Unexpected error:', error);
-        setResponse('An unexpected error occurred');
-      }
+      console.error('Error sending data:', error);
+      // Handle error here
     }
   };
-
-  function test() {
-    const url = BASE_URL + '/login/john.doe/example';
-    console.log(url);
-
-    fetch(url, {
-      credentials: 'include',
-    })
-      .then(response => response.json())
-      .then(data => {
-        const { id, email, password, items: itemsFromApi } = data;
-        console.log(data);
-        setItems(itemsFromApi);
-        console.log(items);
-        toggleLogin(true); 
-
-      })
-      .catch(error => console.error('Error fetching data:', error));
-    toggleLoading(false);
-  }
 
   const handleLoginRequest = async () => {
     const url = BASE_URL + '/login/' + username + '/' + password;
     console.log(url);
 
     fetch(url, {
-      credentials: 'include',
     })
       .then(response => response.json())
       .then(data => {
-        const { id, email, password, items: itemsFromApi } = data;
+        const { items: itemsFromApi } = data;
         setItems(itemsFromApi);
         console.log(items);
         toggleLogin(true); 
@@ -167,6 +123,15 @@ function App() {
     toggleLoading(false);
   };
 
+  const removeItem = (index: number) => {
+      setItems(prevItems => prevItems.filter((_, i) => i !== index));
+      console.log(items);
+  };
+
+  useEffect(() => {
+    handleAddRequest();
+    console.log(items);
+  }, [items])
 
   return (
     <div style={{marginBottom:50}}>
@@ -203,9 +168,9 @@ function App() {
                   <span className="visually-hidden">Loading...</span>
                 </button>
                 }
-                <p>
+                {/* <p>
                   {username} {password}
-                </p>
+                </p> */}
                   {items.map((item, index) => (
                     <li key={index}>
                       {item.description}
@@ -222,7 +187,7 @@ function App() {
                     <button className='btn btn-outline-danger' onClick={handleLogOut}>Log out</button>
                   </div>
                   <div style={{marginBottom:'5%'}}>
-                    <AddButton></AddButton>
+                    <AddButton setItems={setItems}></AddButton>
                   </div>
                 </div>
               </div>
@@ -231,7 +196,7 @@ function App() {
                   <div key={index} style={{backgroundColor:'rgb(255, 215, 215)', borderRadius:20, marginBottom: 10, marginTop:'5%'}}>
                     <div className='d-flex' style={{paddingLeft:20, paddingTop:20, paddingRight:20, justifyContent:'space-between', alignItems:'center'}}>
                       <h2 className='fw-bold'>{item.day}/{item.month}/{item.year}</h2>
-                      <button className='btn btn-outline-danger'> 
+                      <button className='btn btn-outline-danger' onClick={() => removeItem(index)}> 
                         Delete
                       </button>
                     </div>

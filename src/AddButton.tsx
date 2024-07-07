@@ -4,11 +4,38 @@ import React, { useState, useRef, useEffect } from 'react';
 import './AddButton.css';
 import AddItem from './AddItem';
 
-const AddButton: React.FC = () => {
+interface Item {
+    day: number | null,
+    month: number | null,
+    year: number | null,
+    description: string,
+}
+
+interface itemList {
+    setItems: React.Dispatch<React.SetStateAction<Item[]>>;
+
+}
+
+const AddButton: React.FC<itemList> = ({ setItems }, items: Item[]) => {
+
     const [isPopoutVisible, setIsPopoutVisible] = useState(false);
-    const [day, setDay] = useState('');
-    const [month, setMonth] = useState('');
-    const [year, setYear] = useState('');
+    const [day, setDay] = useState<number | null>(null);
+    const [month, setMonth] = useState<number | null>(null);
+    const [year, setYear] = useState<number | null>(null);
+    const [description, setInputValue] = useState('');
+
+    const addItem = () => {
+        const newItem: Item = {
+            day: day,
+            month: month,
+            year: year,
+            description: description,
+        };
+        setItems(prevItems => [newItem, ...prevItems]);
+        console.log(items)
+    };
+
+
 
     const togglePopout = () => {
         setIsPopoutVisible(!isPopoutVisible);
@@ -21,7 +48,6 @@ const AddButton: React.FC = () => {
         }
     };
 
-    const [description, setInputValue] = useState('');
     const textareaRef = useRef<HTMLTextAreaElement>(null); // Define type for ref
 
     useEffect(() => {
@@ -39,11 +65,12 @@ const AddButton: React.FC = () => {
     };
 
     function handleAdd() {
-        if (day != '' && month != '' && year != '' && description != '') {
+        if (day != null && month != null && year != null && description != '') {
+            addItem();
             setIsPopoutVisible(false);
-            setDay('');
-            setMonth('');
-            setYear('');
+            setDay(null);
+            setMonth(null);
+            setYear(null);
             setInputValue('');
         } else {
             console.log("Cannot add");
@@ -55,9 +82,9 @@ const AddButton: React.FC = () => {
             document.addEventListener('mousedown', handleClickOutside);
         } else {
             document.removeEventListener('mousedown', handleClickOutside);
-            setDay('');
-            setMonth('');
-            setYear('');
+            setDay(null);
+            setMonth(null);
+            setYear(null);
             setInputValue('');
         }
         return () => {
@@ -69,7 +96,7 @@ const AddButton: React.FC = () => {
     <div className="button-container">
         <button className="add-button" onClick={togglePopout}>
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-lg" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+            <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
         </svg>
         <span>Add New Item</span>
         </button>
