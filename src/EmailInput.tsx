@@ -36,7 +36,6 @@ const EmailInput: React.FC<EmailInputProps> = ({ isPassword, text, setVariable }
     <div className={styles.emailInput} style={{marginTop:'2%', width:'100%'}}>
       <input
         type={isPassword && !showPassword ? 'password' : 'text'}
-        id="email"
         name="email"
         value={inputValue}
         onChange={handleChange}

@@ -44,10 +44,10 @@ function App() {
   const [items, setItems] = useState<Item[]>([]);
 
 
-  const [response, setResponse] = useState<string | null>(null);
+  // const [response, setResponse] = useState<string | null>(null);
   const [isLoading, toggleLoading] = useState(false);
   const [isLoggedIn, toggleLogin] = useState(false);
-
+  const [isError, setError] = useState(false);
 
   const [page, setDisplayPage] = useState(0);
 
@@ -63,7 +63,6 @@ function App() {
     setUsername('');
     setPassword('');
     setItems([]);
-    setResponse(null);
     toggleLogin(false);
   }
 
@@ -101,6 +100,7 @@ function App() {
       // Handle successful response here
     } catch (error) {
       console.error('Error sending data:', error);
+  
       // Handle error here
     }
   };
@@ -117,8 +117,9 @@ function App() {
         setItems(itemsFromApi);
         console.log(items);
         toggleLogin(true); 
+        setError(false);
       })
-      .catch(error => console.error('Error fetching data:', error));
+      .catch(error => console.error('Error fetching data:', error, setError(true)));
 
     toggleLoading(false);
   };
@@ -168,14 +169,17 @@ function App() {
                   <span className="visually-hidden">Loading...</span>
                 </button>
                 }
-                {/* <p>
-                  {username} {password}
-                </p> */}
-                  {items.map((item, index) => (
+                {isError == true ? 
+                <p style={{color:'red'}}>
+                  Incorrect password
+                </p>
+                : null
+                }
+                  {/* {items.map((item, index) => (
                     <li key={index}>
                       {item.description}
                     </li>
-                  ))}
+                  ))} */}
               </div>
             </div> 
             : 
