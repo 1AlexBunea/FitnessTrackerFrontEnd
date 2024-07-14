@@ -16,6 +16,7 @@ This is the frontend for a Fitness Tracker application, built with React TypeScr
 
 - React TypeScript
 - Fetch API for network requests
+- Backend: [View on Github](https://github.com/1AlexBunea/FitnessTrackerBackend)
 
 ## 🔧 Setup and Installation
 
