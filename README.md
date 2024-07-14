@@ -12,13 +12,10 @@ This is the frontend for a Fitness Tracker application, built with React TypeScr
 - View workout history and progress
 - Real-time synchronization with backend
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stack: Front End
 
-- React
-- TypeScript
+- React TypeScript
 - Fetch API for network requests
-- React Router for navigation
-- (Add any other major libraries/frameworks used in the frontend)
 
 ## 🔧 Setup and Installation
 
